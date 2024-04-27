@@ -1,7 +1,6 @@
 package com.airwave.consumer.service;
 
 import com.airwave.consumer.model.GeofenceDTO;
-import com.airwave.consumer.model.GeofenceRecords;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,16 +30,18 @@ public class GeofenceService {
     String url = AirwaveUrl;
     HttpHeaders headers = new HttpHeaders();
     headers.set("Content-Type", "application/json");
-    HttpEntity<String> entity = new HttpEntity<>(headers);
+    HttpEntity<Map<String, List<GeofenceDTO>>> entity = new HttpEntity<>(headers);
 
-    ResponseEntity<Map<String, List<GeofenceDTO>>> response = restTemplate.exchange(
-        url,
-        HttpMethod.GET,
-        entity,
-        new ParameterizedTypeReference<Map<String, List<GeofenceDTO>>>() {}
-    );
+        ResponseEntity<Map<String, List<GeofenceDTO>>> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
 
-    return response.getBody();
+                new ParameterizedTypeReference<Map<String, List<GeofenceDTO>>>() {}
+
+        );
+        return responseEntity.getBody();
+
 }
 
 
