@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GeofenceRecords {
 
-    @Id
-    private Integer geofence_id;
 
+    private Integer geofence_id;
+    @Id
     private String viewname;
     private String type;
     private Boolean status;
@@ -29,7 +29,8 @@ public class GeofenceRecords {
     private String project;
 
     // Constructor with all fields except ID
-    public GeofenceRecords(String viewname, String type, Boolean status, Date date, String region, Date insertion, String screen, String module, String project) {
+    public GeofenceRecords(Integer geofence_id, String viewname, String type, Boolean status, Date date, String region, Date insertion, String screen, String module, String project) {
+        this.geofence_id = geofence_id;
         this.viewname = viewname;
         this.type = type;
         this.status = status;

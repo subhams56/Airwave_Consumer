@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
-public interface GeofenceRepository extends JpaRepository<GeofenceRecords, Integer> {
+public interface GeofenceRepository extends JpaRepository<GeofenceRecords, String> {
 
 
 }
