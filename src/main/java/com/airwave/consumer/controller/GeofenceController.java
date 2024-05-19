@@ -33,7 +33,7 @@ public class GeofenceController {
 
 
     @GetMapping("/getGeofenceAsList")
-    public List<?> getRecords()  {
+    public List<GeofenceDTO> getRecords()  {
 
         return geofenceService.getRecords();
 
@@ -41,7 +41,7 @@ public class GeofenceController {
     }
 
     @GetMapping("/getConvertedGeofence")
-    public List<?> getConvertedGeofence()  {
+    public List<GeofenceRecords> getConvertedGeofence()  {
 
        List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
        return geofenceService.convertToGeofence(geofenceDTOS);
@@ -55,7 +55,7 @@ public class GeofenceController {
         List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
         List<GeofenceRecords> geofenceRecords =geofenceService.convertToGeofence(geofenceDTOS);
         int geoFenceListSize = geofenceRecords.size();
-        logger.info("Geofence List Size : {} ", geoFenceListSize);
+        logger.info("Geofence List Size : {}", geoFenceListSize);
 
         geofenceService.saveGeofenceRecords(geofenceRecords);
 
