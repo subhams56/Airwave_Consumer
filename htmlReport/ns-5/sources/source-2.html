@@ -1,0 +1,316 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > GeofenceService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.airwave.consumer.service</a>
+</div>
+
+<h1>Coverage Summary for Class: GeofenceService (com.airwave.consumer.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GeofenceService</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.8%
+  </span>
+  <span class="absValue">
+    (5/51)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GeofenceService$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">GeofenceService$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">GeofenceService$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (2/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.4%
+  </span>
+  <span class="absValue">
+    (5/53)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.airwave.consumer.service;
+&nbsp;
+&nbsp;import com.airwave.consumer.model.GeofenceDTO;
+&nbsp;import com.airwave.consumer.model.GeofenceRecords;
+&nbsp;import com.airwave.consumer.repository.GeofenceRepository;
+&nbsp;import jakarta.mail.MessagingException;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.core.ParameterizedTypeReference;
+&nbsp;import org.springframework.http.*;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;public class GeofenceService {
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = LoggerFactory.getLogger(GeofenceService.class);</b>
+&nbsp;
+&nbsp;
+&nbsp;    private RestTemplate restTemplate;
+&nbsp;    private EmailService emailService;
+&nbsp;    private GeofenceRepository geofenceRepository;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public GeofenceService(RestTemplate restTemplate, EmailService emailService, GeofenceRepository geofenceRepository) {</b>
+<b class="fc">&nbsp;        this.restTemplate = restTemplate;</b>
+<b class="fc">&nbsp;        this.emailService = emailService;</b>
+<b class="fc">&nbsp;        this.geofenceRepository = geofenceRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Value( &quot;${airwave.geofence.url}&quot;)
+&nbsp;    private String airwaveUrl;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public void saveGeofenceRecords(List&lt;GeofenceRecords&gt; geofenceRecords) throws MessagingException {
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Saving Geofence Records to DB&quot;);</b>
+<b class="nc">&nbsp;        int recordCount = 0;</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            geofenceRepository.saveAll(geofenceRecords);</b>
+<b class="nc">&nbsp;            recordCount = geofenceRecords.size();</b>
+<b class="nc">&nbsp;            emailService.sendEmail(recordCount, true);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            logger.error(&quot;Error saving Geofence Records to DB&quot;);</b>
+<b class="nc">&nbsp;            emailService.sendEmail(recordCount, false);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public Map&lt;String, List&lt;GeofenceDTO&gt;&gt; getGeofenceRecords() {
+<b class="nc">&nbsp;        String url = airwaveUrl;</b>
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;        headers.set(&quot;Content-Type&quot;, &quot;application/json&quot;);</b>
+<b class="nc">&nbsp;        HttpEntity&lt;Map&lt;String, List&lt;GeofenceDTO&gt;&gt;&gt; entity = new HttpEntity&lt;&gt;(headers);</b>
+&nbsp;
+<b class="nc">&nbsp;        ResponseEntity&lt;Map&lt;String, List&lt;GeofenceDTO&gt;&gt;&gt; responseEntity = restTemplate.exchange(</b>
+&nbsp;                url,
+&nbsp;                HttpMethod.GET,
+&nbsp;                entity,
+<b class="nc">&nbsp;                new ParameterizedTypeReference&lt;&gt;() {}</b>
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, List&lt;GeofenceDTO&gt;&gt; responseBody = responseEntity.getBody();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (responseBody == null) {</b>
+<b class="nc">&nbsp;            logger.warn(&quot;Received null response body from {}&quot;, url);</b>
+<b class="nc">&nbsp;            return Collections.emptyMap();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Records: {}&quot;, responseBody.keySet());</b>
+<b class="nc">&nbsp;        return responseBody;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public List&lt;GeofenceDTO&gt; getRecords() {
+<b class="nc">&nbsp;        String url = airwaveUrl;</b>
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;        headers.set(&quot;Content-Type&quot;, &quot;application/json&quot;);</b>
+<b class="nc">&nbsp;        HttpEntity&lt;Map&lt;String, List&lt;GeofenceDTO&gt;&gt;&gt; entity = new HttpEntity&lt;&gt;(headers);</b>
+&nbsp;
+<b class="nc">&nbsp;        ResponseEntity&lt;Map&lt;String, List&lt;GeofenceDTO&gt;&gt;&gt; responseEntity = restTemplate.exchange(</b>
+&nbsp;                url,
+&nbsp;                HttpMethod.GET,
+&nbsp;                entity,
+&nbsp;
+<b class="nc">&nbsp;                new ParameterizedTypeReference&lt;Map&lt;String, List&lt;GeofenceDTO&gt;&gt;&gt;() {}</b>
+&nbsp;        );
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        return Objects.requireNonNull(responseEntity.getBody()).entrySet().iterator().next().getValue();</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;GeofenceRecords&gt; convertToGeofence(List&lt;GeofenceDTO&gt; geofenceDTOList)
+&nbsp;    {
+<b class="nc">&nbsp;        logger.info(&quot;Converting to Geofence&quot;);</b>
+<b class="nc">&nbsp;        List&lt;GeofenceRecords&gt; convertedGeofenceRecords = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        for(GeofenceDTO geofenceDTO : geofenceDTOList){</b>
+<b class="nc">&nbsp;            GeofenceRecords geofenceRecords = processGeofenceRecord(geofenceDTO);</b>
+<b class="nc">&nbsp;            convertedGeofenceRecords.add(geofenceRecords);</b>
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        return convertedGeofenceRecords;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public GeofenceRecords processGeofenceRecord(GeofenceDTO geofenceDTO) {
+&nbsp;
+<b class="nc">&nbsp;        GeofenceRecords geofenceRecords = new GeofenceRecords();</b>
+&nbsp;
+<b class="nc">&nbsp;        geofenceRecords.setGeofenceId(geofenceDTO.getGeofenceId());</b>
+<b class="nc">&nbsp;        geofenceRecords.setViewname(geofenceDTO.getViewname()+&quot;_&quot;+ UUID.randomUUID());</b>
+<b class="nc">&nbsp;        geofenceRecords.setType(geofenceDTO.getType());</b>
+<b class="nc">&nbsp;        geofenceRecords.setStatus(geofenceDTO.isStatus());</b>
+<b class="nc">&nbsp;        geofenceRecords.setDate(geofenceDTO.getDate());</b>
+<b class="nc">&nbsp;        geofenceRecords.setRegion(&quot;AIR-US1&quot;);</b>
+<b class="nc">&nbsp;        geofenceRecords.setInsertion(new Date());</b>
+<b class="nc">&nbsp;        geofenceRecords.setScreen(&quot;WIN/IOS&quot;);</b>
+<b class="nc">&nbsp;        geofenceRecords.setModule(&quot;AirwaveUSA&quot;);</b>
+<b class="nc">&nbsp;        geofenceRecords.setProject(&quot;Airwave-Consumer&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Modified Geofence Record: {}&quot;, geofenceRecords);</b>
+&nbsp;
+<b class="nc">&nbsp;        return geofenceRecords;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-05-19 17:59</div>
+</div>
+</body>
+</html>
