@@ -5,6 +5,7 @@ import com.airwave.consumer.model.GeofenceDTO;
 import com.airwave.consumer.model.GeofenceRecords;
 import com.airwave.consumer.repository.GeofenceRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,10 @@ public class GeofenceService {
     @Autowired
     private RestTemplate restTemplate;
 
+
+    @Autowired
+    private EmailService emailService;
+
     @Autowired
     private GeofenceRepository geofenceRepository;
 
@@ -43,15 +48,19 @@ public class GeofenceService {
 
 
 
-    public void saveGeofenceRecords(List<GeofenceRecords> geofenceRecords){
+    public void saveGeofenceRecords(List<GeofenceRecords> geofenceRecords) throws MessagingException {
 
         logger.info("Saving Geofence Records to DB");
-        try{
+        int recordCount = 0;
+        try {
             geofenceRepository.saveAll(geofenceRecords);
+            recordCount = geofenceRecords.size();
+            emailService.sendEmail(recordCount, true);
 
-        }
-        catch (Exception e){
+
+        } catch (Exception e) {
             logger.error("Error saving Geofence Records to DB");
+            emailService.sendEmail(recordCount, false);
         }
 
 

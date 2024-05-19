@@ -53,6 +53,8 @@ public class GeofenceController {
 
         List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
         List<GeofenceRecords> geofenceRecords =geofenceService.convertToGeofence(geofenceDTOS);
+        int geoFenceListSize = geofenceRecords.size();
+        logger.info("Geofence List Size : "+geoFenceListSize);
 
         geofenceService.saveGeofenceRecords(geofenceRecords);
 
