@@ -59,22 +59,30 @@ public class EmailService {
 
     public String emailContentAsHtmlTable(EmailModel em){
         // Formatting the date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yy");
 
         // Constructing the HTML table
         StringBuilder html = new StringBuilder();
         html.append("<html><body>");
         html.append("<h2>Application Status Report</h2>");
-        html.append("<table border='1' style='border-collapse: collapse;'>");
-        html.append("<tr><th>Date</th><th>Application Name</th><th>Records Count</th><th>Status</th><th>Host Name</th></tr>");
+        html.append("<table border='1' style='border-collapse: collapse; border: 2px solid #000000;'>");  // Thicker border
+        html.append("<tr style='background-color: #f2f2f2;'>");  // Header row color
+        html.append("<th style='border: 2px solid #000000; padding: 8px;'>Date</th>");
+        html.append("<th style='border: 2px solid #000000; padding: 8px;'>Application Name</th>");
+        html.append("<th style='border: 2px solid #000000; padding: 8px;'>Records Count</th>");
+        html.append("<th style='border: 2px solid #000000; padding: 8px;'>Status</th>");
+        html.append("<th style='border: 2px solid #000000; padding: 8px;'>Host Name</th>");
+        html.append("</tr>");
         html.append("<tr>");
-        html.append("<td>").append(dateFormat.format(em.getDate())).append("</td>");
-        html.append("<td>").append(em.getAppName()).append("</td>");
-        html.append("<td>").append(em.getRecordsCount()).append("</td>");
-        html.append("<td>").append(em.getStatus() ? "Success" : "Failure").append("</td>");
-        html.append("<td>").append(em.getHostName()).append("</td>");
+        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(dateFormat.format(em.getDate())).append("</td>");
+        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getAppName()).append("</td>");
+        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getRecordsCount()).append("</td>");
+        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getStatus() ? "Success" : "Failure").append("</td>");
+        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getHostName()).append("</td>");
         html.append("</tr>");
         html.append("</table>");
+        html.append("<br><br>");
+        html.append("<p style='font-size: smaller; color: gray;'>This is an auto-generated, non-monitored email. Please do not reply.</p>");
         html.append("</body></html>");
 
         return html.toString();
