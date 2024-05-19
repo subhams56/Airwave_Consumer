@@ -1,10 +1,8 @@
 package com.airwave.consumer.service;
 
-import aj.org.objectweb.asm.TypeReference;
 import com.airwave.consumer.model.GeofenceDTO;
 import com.airwave.consumer.model.GeofenceRecords;
 import com.airwave.consumer.repository.GeofenceRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -12,14 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
-import static org.springframework.data.auditing.CurrentDateTimeProvider.*;
+
 
 @Service
 @Transactional
@@ -27,22 +24,22 @@ public class GeofenceService {
 
     private static final Logger logger = LoggerFactory.getLogger(GeofenceService.class);
 
-    @Autowired
+
     private RestTemplate restTemplate;
-
-
-    @Autowired
     private EmailService emailService;
-
-    @Autowired
     private GeofenceRepository geofenceRepository;
 
+    @Autowired
+    public GeofenceService(RestTemplate restTemplate, EmailService emailService, GeofenceRepository geofenceRepository) {
+        this.restTemplate = restTemplate;
+        this.emailService = emailService;
+        this.geofenceRepository = geofenceRepository;
+    }
+
     @Value( "${airwave.geofence.url}")
-    private String AirwaveUrl;
+    private String airwaveUrl;
 
 
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
 
@@ -68,54 +65,35 @@ public class GeofenceService {
 
 
     public Map<String, List<GeofenceDTO>> getGeofenceRecords() {
-    String url = AirwaveUrl;
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Content-Type", "application/json");
-    HttpEntity<Map<String, List<GeofenceDTO>>> entity = new HttpEntity<>(headers);
+        String url = airwaveUrl;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        HttpEntity<Map<String, List<GeofenceDTO>>> entity = new HttpEntity<>(headers);
 
         ResponseEntity<Map<String, List<GeofenceDTO>>> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 entity,
-
-                new ParameterizedTypeReference<Map<String, List<GeofenceDTO>>>() {}
+                new ParameterizedTypeReference<>() {}
         );
 
-        logger.info("Records:{} " , responseEntity.getBody().keySet() );
-        return responseEntity.getBody();
+        Map<String, List<GeofenceDTO>> responseBody = responseEntity.getBody();
 
+        if (responseBody == null) {
+            logger.warn("Received null response body from {}", url);
+            return Collections.emptyMap();
+        }
+
+        logger.info("Records: {}", responseBody.keySet());
+        return responseBody;
     }
 
-//    public void retrieveAndProcessGeofences() throws Exception {
-//        String url = AirwaveUrl;
-//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-//
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            String responseBody = response.getBody();
-//            Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
-//
-//            List<GeofenceDTO> geofences = new ArrayList<>();
-//            for (Object obj : responseMap.get("Size : 10000")) {
-//                if (obj instanceof LinkedHashMap) {
-//                    GeofenceDTO geofence = (GeofenceDTO) obj; // Cast each object to GeofenceDTO
-//                    geofences.add(geofence);
-//                } else {
-//                    // Handle unexpected object types (optional)
-//                }
-//            }
-//
-//            for (GeofenceDTO geofence : geofences) {
-//                GeofenceRecords processedResult = processGeofenceRecord(geofence);
-//                logger.info("Processed geofence (id: {}): {}", geofence.getGeofence_id(), processedResult);
-//            }
-//        } else {
-//            logger.error("API call failed with status code: {}", response.getStatusCode());
-//            // Handle error scenarios (e.g., throw exception)
-//        }
-//    }
+
+
+
 
     public List<GeofenceDTO> getRecords() {
-        String url = AirwaveUrl;
+        String url = airwaveUrl;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
         HttpEntity<Map<String, List<GeofenceDTO>>> entity = new HttpEntity<>(headers);
@@ -128,8 +106,8 @@ public class GeofenceService {
                 new ParameterizedTypeReference<Map<String, List<GeofenceDTO>>>() {}
         );
 
-//        logger.info("Records:{} " , responseEntity.getBody().entrySet());
-        return responseEntity.getBody().entrySet().iterator().next().getValue();
+
+        return Objects.requireNonNull(responseEntity.getBody()).entrySet().iterator().next().getValue();
 
 
 
@@ -144,27 +122,13 @@ public class GeofenceService {
         for(GeofenceDTO geofenceDTO : geofenceDTOList){
             GeofenceRecords geofenceRecords = processGeofenceRecord(geofenceDTO);
             convertedGeofenceRecords.add(geofenceRecords);
-//            logger.info("Processed geofence (id: {}): {}", geofenceDTO.getGeofence_id(), geofenceRecords);
+
         }
 
         return convertedGeofenceRecords;
     }
 
 
-//    public void getRecords() {
-//        String url = AirwaveUrl;
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Content-Type", "application/json");
-//        HttpEntity<Map<String, List<GeofenceDTO>>> entity = new HttpEntity<>(headers);
-//        ResponseEntity<Map<String, List<GeofenceDTO>>> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, new ParameterizedTypeReference<Map<String, List<GeofenceDTO>>>() {});
-//
-//        for (Map.Entry<String, List<GeofenceDTO>> entry : responseEntity.getBody().entrySet()) {
-//            if (entry.getKey() instanceof String) {
-//                logger.info("Records: {}", entry.getValue());
-//                break; // Assuming you only want to log the first key-value pair with a String key
-//            }
-//        }
-//    }
 
 
 
