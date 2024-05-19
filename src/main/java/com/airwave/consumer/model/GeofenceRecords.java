@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "GeofenceRecords")
 @Data
 @NoArgsConstructor
+@SuppressWarnings("unused")
 public class GeofenceRecords {
 
 
-    private Integer geofence_id;
+    private Integer geofenceId;
     @Id
     private String viewname;
     private String type;
@@ -28,9 +29,9 @@ public class GeofenceRecords {
     private String module;
     private String project;
 
-    // Constructor with all fields except ID
-    public GeofenceRecords(Integer geofence_id, String viewname, String type, Boolean status, Date date, String region, Date insertion, String screen, String module, String project) {
-        this.geofence_id = geofence_id;
+
+    public GeofenceRecords(Integer geofenceId, String viewname, String type, Boolean status, Date date, String region, Date insertion, String screen, String module, String project) {
+        this.geofenceId = geofenceId;
         this.viewname = viewname;
         this.type = type;
         this.status = status;
