@@ -19,11 +19,11 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private  String mailFrom;
 
-    private final static String subject = "Airwave Consumer Report";
+    private final static String AIRWAVE_CONSUMER_REPORT = "Airwave Consumer Report";
     @Value("${spring.mail.host}")
     private  String hostName;
 
-    private static final String appName = "Airwave Consumer Service";
+    private static final String AIRWAVE_CONSUMER_SERVICE = "Airwave Consumer Service";
 
     @Autowired
     JavaMailSender javaMailSender;
@@ -40,7 +40,7 @@ public class EmailService {
 
         helper.setTo("lucifersubham6@gmail.com");
         helper.setFrom(mailFrom);
-        helper.setSubject(subject);
+        helper.setSubject(AIRWAVE_CONSUMER_REPORT);
         helper.setText(setEmailBody(recordsCount, status), true);
         javaMailSender.send(message);
 
@@ -50,7 +50,7 @@ public class EmailService {
 
         EmailModel em = new EmailModel();
         em.setDate(new Date());
-        em.setAppName(appName);
+        em.setAppName(AIRWAVE_CONSUMER_SERVICE);
         em.setRecordsCount(recordsCount);
         em.setStatus(status);
         em.setHostName(hostName);
