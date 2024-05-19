@@ -1,6 +1,7 @@
 package com.airwave.consumer.service;
 
 import com.airwave.consumer.model.EmailModel;
+import com.airwave.consumer.utils.ConstantUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,11 +75,11 @@ public class EmailService {
         html.append("<th style='border: 2px solid #000000; padding: 8px;'>Host Name</th>");
         html.append("</tr>");
         html.append("<tr>");
-        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(dateFormat.format(em.getDate())).append("</td>");
-        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getAppName()).append("</td>");
-        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getRecordsCount()).append("</td>");
-        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getStatus() ? "Success" : "Failure").append("</td>");
-        html.append("<td style='border: 2px solid #000000; padding: 8px;'>").append(em.getHostName()).append("</td>");
+        html.append(ConstantUtils.TDSTYLE).append(dateFormat.format(em.getDate())).append(ConstantUtils.TD);
+        html.append(ConstantUtils.TDSTYLE).append(em.getAppName()).append(ConstantUtils.TD);
+        html.append(ConstantUtils.TDSTYLE).append(em.getRecordsCount()).append(ConstantUtils.TD);
+        html.append(ConstantUtils.TDSTYLE).append(em.getStatus() ? "Success" : "Failure").append(ConstantUtils.TD);
+        html.append(ConstantUtils.TDSTYLE).append(em.getHostName()).append(ConstantUtils.TD);
         html.append("</tr>");
         html.append("</table>");
         html.append("<br><br>");
