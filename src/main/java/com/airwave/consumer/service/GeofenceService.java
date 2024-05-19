@@ -140,7 +140,7 @@ public class GeofenceService {
 
         GeofenceRecords geofenceRecords = new GeofenceRecords();
 
-        geofenceRecords.setGeofence_id(geofenceDTO.getGeofence_id());
+        geofenceRecords.setGeofence_id(geofenceDTO.getGeofenceId());
         geofenceRecords.setViewname(geofenceDTO.getViewname()+"_"+ UUID.randomUUID());
         geofenceRecords.setType(geofenceDTO.getType());
         geofenceRecords.setStatus(geofenceDTO.isStatus());

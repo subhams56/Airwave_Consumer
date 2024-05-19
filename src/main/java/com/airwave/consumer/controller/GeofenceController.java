@@ -3,6 +3,7 @@ package com.airwave.consumer.controller;
 import com.airwave.consumer.model.GeofenceDTO;
 import com.airwave.consumer.model.GeofenceRecords;
 import com.airwave.consumer.service.GeofenceService;
+import jakarta.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,7 +33,7 @@ public class GeofenceController {
 
 
     @GetMapping("/getGeofenceAsList")
-    public List<?> getRecords() throws Exception {
+    public List<?> getRecords()  {
 
         return geofenceService.getRecords();
 
@@ -40,7 +41,7 @@ public class GeofenceController {
     }
 
     @GetMapping("/getConvertedGeofence")
-    public List<?> getConvertedGeofence() throws Exception {
+    public List<?> getConvertedGeofence()  {
 
        List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
        return geofenceService.convertToGeofence(geofenceDTOS);
@@ -49,12 +50,12 @@ public class GeofenceController {
     }
 
     @GetMapping("/saveGeofence")
-    public void saveGeofenceRecords() throws Exception {
+    public void saveGeofenceRecords() throws MessagingException {
 
         List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
         List<GeofenceRecords> geofenceRecords =geofenceService.convertToGeofence(geofenceDTOS);
         int geoFenceListSize = geofenceRecords.size();
-        logger.info("Geofence List Size : "+geoFenceListSize);
+        logger.info("Geofence List Size : {} ", geoFenceListSize);
 
         geofenceService.saveGeofenceRecords(geofenceRecords);
 
