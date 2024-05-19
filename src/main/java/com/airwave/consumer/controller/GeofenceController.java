@@ -31,16 +31,16 @@ public class GeofenceController {
     }
 
 
-    @GetMapping("/processGeofence")
-    public List<?> processGeofenceTest() throws Exception {
+    @GetMapping("/getGeofenceAsList")
+    public List<?> getRecords() throws Exception {
 
         return geofenceService.getRecords();
 
 
     }
 
-    @GetMapping("/test2")
-    public List<?> processGeofenceTest2() throws Exception {
+    @GetMapping("/getConvertedGeofence")
+    public List<?> getConvertedGeofence() throws Exception {
 
        List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
        return geofenceService.convertToGeofence(geofenceDTOS);
@@ -48,8 +48,8 @@ public class GeofenceController {
 
     }
 
-    @GetMapping("/test3")
-    public void processGeofenceTest3() throws Exception {
+    @GetMapping("/saveGeofence")
+    public void saveGeofenceRecords() throws Exception {
 
         List<GeofenceDTO> geofenceDTOS = geofenceService.getRecords();
         List<GeofenceRecords> geofenceRecords =geofenceService.convertToGeofence(geofenceDTOS);
