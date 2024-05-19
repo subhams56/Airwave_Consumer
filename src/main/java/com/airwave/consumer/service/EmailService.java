@@ -20,14 +20,20 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private  String mailFrom;
 
-    private final static String AIRWAVE_CONSUMER_REPORT = "Airwave Consumer Report";
+    private static final String AIRWAVE_CONSUMER_REPORT = "Airwave Consumer Report";
     @Value("${spring.mail.host}")
     private  String hostName;
 
     private static final String AIRWAVE_CONSUMER_SERVICE = "Airwave Consumer Service";
 
-    @Autowired
+
     JavaMailSender javaMailSender;
+
+
+    @Autowired
+    public EmailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
 
 
@@ -78,7 +84,7 @@ public class EmailService {
         html.append(ConstantUtils.TDSTYLE).append(dateFormat.format(em.getDate())).append(ConstantUtils.TD);
         html.append(ConstantUtils.TDSTYLE).append(em.getAppName()).append(ConstantUtils.TD);
         html.append(ConstantUtils.TDSTYLE).append(em.getRecordsCount()).append(ConstantUtils.TD);
-        html.append(ConstantUtils.TDSTYLE).append(em.getStatus() ? "Success" : "Failure").append(ConstantUtils.TD);
+        html.append(ConstantUtils.TDSTYLE).append(Boolean.TRUE.equals(em.getStatus()) ? "Success" : "Failure").append(ConstantUtils.TD);
         html.append(ConstantUtils.TDSTYLE).append(em.getHostName()).append(ConstantUtils.TD);
         html.append("</tr>");
         html.append("</table>");
