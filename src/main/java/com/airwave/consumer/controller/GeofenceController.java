@@ -2,10 +2,13 @@ package com.airwave.consumer.controller;
 
 import com.airwave.consumer.model.GeofenceDTO;
 import com.airwave.consumer.model.GeofenceRecords;
+import com.airwave.consumer.service.ConsumerService;
 import com.airwave.consumer.service.GeofenceService;
 import jakarta.mail.MessagingException;
+import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +24,13 @@ public class GeofenceController {
 
     private GeofenceService geofenceService;
 
-    public GeofenceController(GeofenceService geofenceService){
+
+    @Autowired
+    private ConsumerService consumerService;
+
+    public GeofenceController(GeofenceService geofenceService) {
         this.geofenceService = geofenceService;
+
     }
 
     @RequestMapping("/get")
@@ -60,6 +68,12 @@ public class GeofenceController {
         geofenceService.saveGeofenceRecords(geofenceRecords);
 
 
+    }
+
+    @GetMapping("/listenTopic")
+    public void listenTopic() throws PulsarClientException {
+
+        consumerService.listenTopic();
     }
 
 
