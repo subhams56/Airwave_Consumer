@@ -1,8 +1,8 @@
 package com.airwave.consumer.model;
 
-
 import java.util.Date;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -16,19 +16,36 @@ import lombok.NoArgsConstructor;
 @SuppressWarnings("unused")
 public class GeofenceRecords {
 
-
+    @Column(name = "geofence_id")
     private Integer geofenceId;
-    @Id
-    private String viewname;
-    private String type;
-    private Boolean status;
-    private Date date;
-    private String region;
-    private Date insertion;
-    private String screen;
-    private String module;
-    private String project;
 
+    @Id
+    @Column(name = "viewname")
+    private String viewname;
+
+    @Column(name = "type")
+    private String type;
+
+    @Column(name = "status")
+    private Boolean status;
+
+    @Column(name = "date")
+    private Date date;
+
+    @Column(name = "region")
+    private String region;
+
+    @Column(name = "insertion")
+    private Date insertion;
+
+    @Column(name = "screen")
+    private String screen;
+
+    @Column(name = "module")
+    private String module;
+
+    @Column(name = "project")
+    private String project;
 
     public GeofenceRecords(Integer geofenceId, String viewname, String type, Boolean status, Date date, String region, Date insertion, String screen, String module, String project) {
         this.geofenceId = geofenceId;

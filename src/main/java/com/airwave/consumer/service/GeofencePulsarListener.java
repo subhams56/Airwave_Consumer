@@ -1,13 +1,20 @@
 package com.airwave.consumer.service;
 
 
+import com.airwave.consumer.model.GeofenceDTO;
+import com.airwave.consumer.model.GeofenceRecords;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -26,9 +33,17 @@ public class GeofencePulsarListener {
     @Autowired
     private PulsarClient pulsarClient;
 
+    @Autowired
+    private PulsarService pulsarService;
+
+    @Autowired
+    private GeofenceService geofenceService;
+
 
 
     private Consumer<byte[]> consumer;
+
+    List<GeofenceRecords> geofenceRecords = new ArrayList<>();
 
     public void startListener() throws PulsarClientException {
         if (consumer == null) {
@@ -40,7 +55,15 @@ public class GeofencePulsarListener {
                     .messageListener((consumer1, msg) -> {
                         try {
                             String message = new String(msg.getData());
-                            log.info("Message Received: " + message);
+                            log.info("Received Geofences From Topic");
+                            if(isJsonObject(message)){
+                                GeofenceDTO geofenceDTO = pulsarService.convertJsonToGeofenceDTO(message);
+                                geofenceRecords.add(geofenceService.processGeofenceRecord(geofenceDTO));
+                                log.info("Total Geofence Records to be saved: {}", geofenceRecords.size());
+                                geofenceService.saveGeofenceRecords(geofenceRecords);
+                            }
+
+
 
                             consumer1.acknowledge(msg);
 
@@ -68,6 +91,17 @@ public class GeofencePulsarListener {
             }
         } else {
             log.info("Pulsar listener is not running.");
+        }
+    }
+
+
+    public boolean isJsonObject(String json){
+        try{
+
+            JSONObject jsonObject = new JSONObject(json);
+            return true;
+        }catch(Exception e){
+            return false;
         }
     }
 
