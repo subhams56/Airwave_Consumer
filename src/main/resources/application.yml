@@ -1,0 +1,17 @@
+server:
+    port: 9204
+
+spring:
+  pulsar:
+    client:
+      service-url: pulsar://localhost:6650
+      topic:
+        name: jt-geofence-topic
+    consumer:
+      subscription:
+        name: airwave-subscription
+    defaults:
+      type-mappings:
+        - messageType: com.airwave.consumer.model.GeofenceDTO
+          schema-info:
+            schema-type: JSON

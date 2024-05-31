@@ -2,13 +2,14 @@ package com.airwave.consumer.controller;
 
 import com.airwave.consumer.model.GeofenceDTO;
 import com.airwave.consumer.model.GeofenceRecords;
-import com.airwave.consumer.service.ConsumerService;
+import com.airwave.consumer.service.GeofencePulsarListener;
 import com.airwave.consumer.service.GeofenceService;
 import jakarta.mail.MessagingException;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,7 @@ public class GeofenceController {
 
 
     @Autowired
-    private ConsumerService consumerService;
+    private GeofencePulsarListener geofencePulsarListener;
 
     public GeofenceController(GeofenceService geofenceService) {
         this.geofenceService = geofenceService;
@@ -71,9 +72,19 @@ public class GeofenceController {
     }
 
     @GetMapping("/listenTopic")
-    public void listenTopic() throws PulsarClientException {
+    public ResponseEntity<String> startListener() {
+        try {
+            geofencePulsarListener.startListener();
+            return ResponseEntity.ok("Pulsar listener started.");
+        } catch (PulsarClientException e) {
+            return ResponseEntity.status(500).body("Failed to start Pulsar listener: " + e.getMessage());
+        }
+    }
 
-        consumerService.listenTopic();
+    @GetMapping("/abortTopic")
+    public ResponseEntity<String> stopListener() {
+        geofencePulsarListener.stopListener();
+        return ResponseEntity.ok("Pulsar listener stopped.");
     }
 
 
